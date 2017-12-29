@@ -232,6 +232,292 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cocong.github.io/2017/12/30/php实现水印添加/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="dg">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="dg's">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/12/30/php实现水印添加/" itemprop="url">php实现水印添加</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-29T19:11:30Z">
+                2017-12-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <pre><code>class Water
+    {
+
+    protected $imgPath;
+    protected $waterPath;
+    protected $imgSource;
+    protected $waterSource;
+
+    protected $imgInfo = [];
+    protected $waterInfo = [];
+    private $error = &apos;&apos;;
+
+    const IMG_OPACITY = &apos;15&apos;;
+
+    /**
+     * Water constructor.
+     * @param $imgPath
+     * @param $waterPath
+     */
+    public function __construct($imgPath, $waterPath)
+    {
+
+        $this-&gt;imgInfo = $this-&gt;getImageInfo($imgPath);
+        $this-&gt;waterInfo = $this-&gt;getImageInfo($waterPath);
+
+        if ($this-&gt;checkImg($imgPath) !== false || $this-&gt;checkImg($waterPath) !== false) {
+            $this-&gt;imgPath = $imgPath;
+            $this-&gt;waterPath = $waterPath;
+        }
+    }
+
+
+    public function init()
+    {
+        $this-&gt;imgSource = $this-&gt;getSource($this-&gt;imgPath);
+        $this-&gt;waterSource = $this-&gt;getSource($this-&gt;waterPath);
+
+        $waterImage = $this-&gt;createWaterImg();
+        $newImage = $this-&gt;makeImg($waterImage);
+
+        $this-&gt;show($newImage);
+    }
+
+    /**
+     * @param $img
+     * @return bool
+     * 图片检查
+     */
+    public function checkImg($img)
+    {
+        $ext = strtolower($this-&gt;getExtension($img));
+        if (in_array($ext, array(&apos;gif&apos;, &apos;jpg&apos;, &apos;jpeg&apos;, &apos;bmp&apos;, &apos;png&apos;, &apos;swf&apos;))) {
+            $imgInfo = $this-&gt;getImageInfo($img);
+            if (empty($imgInfo) || ($ext == &apos;gif&apos; &amp;&amp; empty($imgInfo[&apos;bits&apos;]))) {
+                $this-&gt;setError(&apos;非法图像文件&apos;);
+            } else {
+                return true;
+            }
+        }
+    }
+
+    /**
+     * @param $img
+     * @return mixed
+     * 获取图片后缀
+     */
+    public function getExtension($img)
+    {
+        return pathinfo($img, PATHINFO_EXTENSION);
+    }
+
+    /***
+     * @param $img
+     * @return array
+     * 获取图片信息
+     */
+    public function getImageInfo($img)
+    {
+        $imgInfo = getimagesize($img);
+        switch ($imgInfo[2]) {
+            case 1:
+                $imgType = &quot;gif&quot;;
+                break;
+            case 2:
+                $imgType = &quot;jpg&quot;;
+                break;
+            case 3:
+                $imgType = &quot;png&quot;;
+                break;
+        }
+        $info = [
+            &apos;width&apos; =&gt; $imgInfo[0],
+            &apos;height&apos; =&gt; $imgInfo[1],
+            &apos;type&apos; =&gt; $imgType,
+            &apos;bits&apos; =&gt; $imgInfo[&apos;bits&apos;],
+        ];
+        return $info;
+    }
+
+    /***
+     * @return resource
+     */
+    public function createWaterImg()
+    {
+        $cutImg = imagecreatetruecolor($this-&gt;waterInfo[&apos;width&apos;], $this-&gt;waterInfo[&apos;height&apos;]);
+        $white = imagecolorallocatealpha($cutImg, 255, 255, 255, 0);
+        imagefill($cutImg, 0, 0, $white);
+        imagecopy($cutImg, $this-&gt;waterSource, 0, 0, 0, 0, $this-&gt;waterInfo[&apos;width&apos;], $this-&gt;waterInfo[&apos;height&apos;]);
+        return $cutImg;
+    }
+
+    /**
+     * @param $cut
+     * @return mixed
+     */
+    public function makeImg($cut)
+    {
+
+        $lengthx = $this-&gt;imgInfo[&apos;width&apos;] - 10;
+        $lengthy = $this-&gt;imgInfo[&apos;height&apos;] - 10;
+
+        for ($x = 0; $x &lt; $lengthx; $x) {
+            for ($y = 0; $y &lt; $lengthy; $y) {
+                imagecopymerge($this-&gt;imgSource, $cut, $x, $y, 0, 0, $this-&gt;waterInfo[&apos;width&apos;], $this-&gt;waterInfo[&apos;height&apos;], water::IMG_OPACITY);
+                $y += $this-&gt;waterInfo[&apos;height&apos;];
+            }
+            $x += $this-&gt;waterInfo[&apos;width&apos;];
+        }
+        return $this-&gt;imgSource;
+    }
+
+    public function show($newImage)
+    {
+        header(&apos;content-type:&apos; . $this-&gt;imgInfo[&apos;type&apos;]);
+        echo imagejpeg($newImage);
+        exit;
+    }
+
+    /***
+     * @param $img
+     * @return resource
+     * 获取图片源
+     */
+    public function getSource($img)
+    {
+        return imagecreatefromstring(file_get_contents($img));
+    }
+
+    private function setError($msg)
+    {
+        $this-&gt;error = $msg;
+    }
+
+    public function getError()
+    {
+        return $this-&gt;error;
+    }
+
+    public function __destruct()
+    {
+        imagedestroy($this-&gt;imgSource);
+    }
+}
+
+$water = new Water(&apos;img.jpg&apos;, &apos;water.jpg&apos;);
+
+$water-&gt;init();
+</code></pre>
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://cocong.github.io/2017/12/27/window安装PHP的composer/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -664,7 +950,7 @@ php `dirname $0`/composer.phar $*
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

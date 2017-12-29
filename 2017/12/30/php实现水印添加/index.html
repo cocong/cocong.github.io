@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="下载配置1.Composer 进入官网 2.选择Download,下拉到Manual Download,下载最新版本; 3.将下载到composer.phar的文件复制到你的PHP目录,和php.exe同级; 4.新建composer.bat里面写:@ECHO OFF  php &amp;quot;%~dp0composer.phar&amp;quot; %* 5.把php放到path环境变量中,打开命令提示符,">
+<meta name="description" content="class Water     {      protected $imgPath;     protected $waterPath;     protected $imgSource;     protected $waterSource;      protected $imgInfo = [];     protected $waterInfo = [];     private $err">
 <meta property="og:type" content="article">
-<meta property="og:title" content="window安装PHP的composer">
-<meta property="og:url" content="http://cocong.github.io/2017/12/27/window安装PHP的composer/index.html">
+<meta property="og:title" content="php实现水印添加">
+<meta property="og:url" content="http://cocong.github.io/2017/12/30/php实现水印添加/index.html">
 <meta property="og:site_name" content="dg&#39;s">
-<meta property="og:description" content="下载配置1.Composer 进入官网 2.选择Download,下拉到Manual Download,下载最新版本; 3.将下载到composer.phar的文件复制到你的PHP目录,和php.exe同级; 4.新建composer.bat里面写:@ECHO OFF  php &amp;quot;%~dp0composer.phar&amp;quot; %* 5.把php放到path环境变量中,打开命令提示符,">
+<meta property="og:description" content="class Water     {      protected $imgPath;     protected $waterPath;     protected $imgSource;     protected $waterSource;      protected $imgInfo = [];     protected $waterInfo = [];     private $err">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-12-26T08:31:24.085Z">
+<meta property="og:updated_time" content="2017-12-29T11:19:23.275Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="window安装PHP的composer">
-<meta name="twitter:description" content="下载配置1.Composer 进入官网 2.选择Download,下拉到Manual Download,下载最新版本; 3.将下载到composer.phar的文件复制到你的PHP目录,和php.exe同级; 4.新建composer.bat里面写:@ECHO OFF  php &amp;quot;%~dp0composer.phar&amp;quot; %* 5.把php放到path环境变量中,打开命令提示符,">
+<meta name="twitter:title" content="php实现水印添加">
+<meta name="twitter:description" content="class Water     {      protected $imgPath;     protected $waterPath;     protected $imgSource;     protected $waterSource;      protected $imgInfo = [];     protected $waterInfo = [];     private $err">
 
 
 
@@ -119,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://cocong.github.io/2017/12/27/window安装PHP的composer/"/>
+  <link rel="canonical" href="http://cocong.github.io/2017/12/30/php实现水印添加/"/>
 
 
 
 
 
-  <title>window安装PHP的composer | dg's</title>
+  <title>php实现水印添加 | dg's</title>
   
 
 
@@ -232,7 +232,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://cocong.github.io/2017/12/27/window安装PHP的composer/">
+    <link itemprop="mainEntityOfPage" href="http://cocong.github.io/2017/12/30/php实现水印添加/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="dg">
@@ -249,7 +249,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">window安装PHP的composer</h1>
+          <h1 class="post-title" itemprop="name headline">php实现水印添加</h1>
         
 
         <div class="post-meta">
@@ -261,8 +261,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-27T00:09:58+08:00">
-                2017-12-26
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-29T19:11:30Z">
+                2017-12-29
               </time>
             
 
@@ -299,18 +299,173 @@
       
 
       
-        <h2 id="下载配置"><a href="#下载配置" class="headerlink" title="下载配置"></a>下载配置</h2><p>1.<a href="https://getcomposer.org/" title="Title" target="_blank" rel="noopener">Composer</a> 进入官网</p>
-<p>2.选择Download,下拉到Manual Download,下载最新版本;</p>
-<p>3.将下载到composer.phar的文件复制到你的PHP目录,和php.exe同级;</p>
-<p>4.新建composer.bat里面写:<code>@ECHO OFF
- php &quot;%~dp0composer.phar&quot; %*</code></p>
-<p>5.把php放到path环境变量中,打开命令提示符,输入 <code>composer -v</code>;</p>
-<h2 id="git-Bash-操作composer命令"><a href="#git-Bash-操作composer命令" class="headerlink" title="git Bash 操作composer命令"></a>git Bash 操作composer命令</h2><p>1.已经安装composer，写好composer.bat，并且设置好了path，在cmd下可以正常使用，但是在git-bash里面不行，显示如下提示：<code>bash: composer: command not found</code></p>
-<p>2.原因是，git-bash 不识别 composer.bat 文件，需要新建一个 composer 文件，输入如下内容：</p>
-<pre><code>#!/usr/bin/env sh
+        <pre><code>class Water
+    {
 
-# php /path/to/composer.phar $*
-php `dirname $0`/composer.phar $*
+    protected $imgPath;
+    protected $waterPath;
+    protected $imgSource;
+    protected $waterSource;
+
+    protected $imgInfo = [];
+    protected $waterInfo = [];
+    private $error = &apos;&apos;;
+
+    const IMG_OPACITY = &apos;15&apos;;
+
+    /**
+     * Water constructor.
+     * @param $imgPath
+     * @param $waterPath
+     */
+    public function __construct($imgPath, $waterPath)
+    {
+
+        $this-&gt;imgInfo = $this-&gt;getImageInfo($imgPath);
+        $this-&gt;waterInfo = $this-&gt;getImageInfo($waterPath);
+
+        if ($this-&gt;checkImg($imgPath) !== false || $this-&gt;checkImg($waterPath) !== false) {
+            $this-&gt;imgPath = $imgPath;
+            $this-&gt;waterPath = $waterPath;
+        }
+    }
+
+
+    public function init()
+    {
+        $this-&gt;imgSource = $this-&gt;getSource($this-&gt;imgPath);
+        $this-&gt;waterSource = $this-&gt;getSource($this-&gt;waterPath);
+
+        $waterImage = $this-&gt;createWaterImg();
+        $newImage = $this-&gt;makeImg($waterImage);
+
+        $this-&gt;show($newImage);
+    }
+
+    /**
+     * @param $img
+     * @return bool
+     * 图片检查
+     */
+    public function checkImg($img)
+    {
+        $ext = strtolower($this-&gt;getExtension($img));
+        if (in_array($ext, array(&apos;gif&apos;, &apos;jpg&apos;, &apos;jpeg&apos;, &apos;bmp&apos;, &apos;png&apos;, &apos;swf&apos;))) {
+            $imgInfo = $this-&gt;getImageInfo($img);
+            if (empty($imgInfo) || ($ext == &apos;gif&apos; &amp;&amp; empty($imgInfo[&apos;bits&apos;]))) {
+                $this-&gt;setError(&apos;非法图像文件&apos;);
+            } else {
+                return true;
+            }
+        }
+    }
+
+    /**
+     * @param $img
+     * @return mixed
+     * 获取图片后缀
+     */
+    public function getExtension($img)
+    {
+        return pathinfo($img, PATHINFO_EXTENSION);
+    }
+
+    /***
+     * @param $img
+     * @return array
+     * 获取图片信息
+     */
+    public function getImageInfo($img)
+    {
+        $imgInfo = getimagesize($img);
+        switch ($imgInfo[2]) {
+            case 1:
+                $imgType = &quot;gif&quot;;
+                break;
+            case 2:
+                $imgType = &quot;jpg&quot;;
+                break;
+            case 3:
+                $imgType = &quot;png&quot;;
+                break;
+        }
+        $info = [
+            &apos;width&apos; =&gt; $imgInfo[0],
+            &apos;height&apos; =&gt; $imgInfo[1],
+            &apos;type&apos; =&gt; $imgType,
+            &apos;bits&apos; =&gt; $imgInfo[&apos;bits&apos;],
+        ];
+        return $info;
+    }
+
+    /***
+     * @return resource
+     */
+    public function createWaterImg()
+    {
+        $cutImg = imagecreatetruecolor($this-&gt;waterInfo[&apos;width&apos;], $this-&gt;waterInfo[&apos;height&apos;]);
+        $white = imagecolorallocatealpha($cutImg, 255, 255, 255, 0);
+        imagefill($cutImg, 0, 0, $white);
+        imagecopy($cutImg, $this-&gt;waterSource, 0, 0, 0, 0, $this-&gt;waterInfo[&apos;width&apos;], $this-&gt;waterInfo[&apos;height&apos;]);
+        return $cutImg;
+    }
+
+    /**
+     * @param $cut
+     * @return mixed
+     */
+    public function makeImg($cut)
+    {
+
+        $lengthx = $this-&gt;imgInfo[&apos;width&apos;] - 10;
+        $lengthy = $this-&gt;imgInfo[&apos;height&apos;] - 10;
+
+        for ($x = 0; $x &lt; $lengthx; $x) {
+            for ($y = 0; $y &lt; $lengthy; $y) {
+                imagecopymerge($this-&gt;imgSource, $cut, $x, $y, 0, 0, $this-&gt;waterInfo[&apos;width&apos;], $this-&gt;waterInfo[&apos;height&apos;], water::IMG_OPACITY);
+                $y += $this-&gt;waterInfo[&apos;height&apos;];
+            }
+            $x += $this-&gt;waterInfo[&apos;width&apos;];
+        }
+        return $this-&gt;imgSource;
+    }
+
+    public function show($newImage)
+    {
+        header(&apos;content-type:&apos; . $this-&gt;imgInfo[&apos;type&apos;]);
+        echo imagejpeg($newImage);
+        exit;
+    }
+
+    /***
+     * @param $img
+     * @return resource
+     * 获取图片源
+     */
+    public function getSource($img)
+    {
+        return imagecreatefromstring(file_get_contents($img));
+    }
+
+    private function setError($msg)
+    {
+        $this-&gt;error = $msg;
+    }
+
+    public function getError()
+    {
+        return $this-&gt;error;
+    }
+
+    public function __destruct()
+    {
+        imagedestroy($this-&gt;imgSource);
+    }
+}
+
+$water = new Water(&apos;img.jpg&apos;, &apos;water.jpg&apos;);
+
+$water-&gt;init();
 </code></pre>
       
     </div>
@@ -335,8 +490,8 @@ php `dirname $0`/composer.phar $*
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/12/26/我的博客/" rel="next" title="明朝那些事(公元1368~1644年)">
-                <i class="fa fa-chevron-left"></i> 明朝那些事(公元1368~1644年)
+              <a href="/2017/12/27/window安装PHP的composer/" rel="next" title="window安装PHP的composer">
+                <i class="fa fa-chevron-left"></i> window安装PHP的composer
               </a>
             
           </div>
@@ -344,10 +499,6 @@ php `dirname $0`/composer.phar $*
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/12/30/php实现水印添加/" rel="prev" title="php实现水印添加">
-                php实现水印添加 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -399,17 +550,8 @@ php `dirname $0`/composer.phar $*
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -453,22 +595,6 @@ php `dirname $0`/composer.phar $*
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#下载配置"><span class="nav-number">1.</span> <span class="nav-text">下载配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#git-Bash-操作composer命令"><span class="nav-number">2.</span> <span class="nav-text">git Bash 操作composer命令</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
